@@ -1,1 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delivery Tracking | Transport-Link</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #090D18;
+      --bg2:       #0F1424;
+      --bg3:       #151C30;
+      --border:    #1E2740;
+      --orange:    #FF5C1A;
+      --orange2:   #FF7A3D;
+      --blue:      #2A6EFF;
+      --text:      #E8EDF8;
+      --muted:     #6B7A99;
+      --muted2:    #3D4E6E;
+      --green:     #1AFF8C;
+      --red:       #FF3A3A;
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 68px;
+      background: rgba(9, 13, 24, 0.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--orange);
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .logo-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: 0.08em;
+      color: var(--text);
+    }
+
+    .logo-text span { color: var(--orange); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--orange); }
+
+    .nav-cta {
+      background: var(--orange);
+      color: #fff !important;
+      padding: 8px 20px;
+      font-weight: 600 !important;
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 93% 100%, 0 100%);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      transition: 0.3s;
+    }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: 0;
+      top: 68px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      z-index: 99;
+      padding: 40px 5%;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .mobile-nav.open { display: flex; }
+
+    .mobile-nav a {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .main {
+      position: relative;
+      z-index: 1;
+      padding-top: 100px;
+      padding-bottom: 80px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 5%;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--orange); }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 12px 28px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      color: var(--orange);
+      border-bottom: 2px solid var(--orange);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+ justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .trip-id {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--orange);
+    }
+
+    .status-badge {
+      padding: 6px 14px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .status-pending { background: rgba(255, 92, 26, 0.15); color: var(--orange); border: 1px solid var(--orange); }
+    .status-active { background: rgba(42, 110, 255, 0.15); color: var(--blue); border: 1px solid var(--blue); }
+    .status-delivered { background: rgba(26, 255, 140, 0.15); color: var(--green); border: 1px solid var(--green); }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .info-item .label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .info-item .value {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .pin-display {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--green);
+      background: var(--bg);
+      padding: 16px;
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+
+    .photo-preview {
+      background: var(--bg);
+      border: 1px dashed var(--border);
+      padding: 20px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .photo-preview img {
+      max-width: 100%;
+      max-height: 200px;
+    }
+
+    .btn-submit {
+      background: var(--orange);
+      color: #fff;
+      padding: 14px 28px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      clip-path: polygon(0 0, 100% 0, 100% 75%, 94% 100%, 0 100%);
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover { background: var(--orange2); }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 24px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .delivery-record {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .delivery-record img {
+      max-width: 100%;
+      margin-top: 12px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .search-box input {
+      flex: 1;
+    }
+
+    .search-box button {
+      padding: 12px 24px;
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .card { padding: 20px; }
+      .pin-display { font-size: 1.2rem; letter-spacing: 0.15em; }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+
+    footer {
+      padding: 40px 5%;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    footer p {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-mark">TL</div>
+    <span class="logo-text">TRANSPORT<span>-LINK</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#how-it-works">How It Works</a></li>
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#transport">Services</a></li>
+    <li><a href="verify.html">Drivers</a></li>
+    <li><a href="booking.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html#how-it-works" onclick="toggleNav()">How It Works</a>
+  <a href="index.html#features" onclick="toggleNav()">Features</a>
+  <a href="index.html#transport" onclick="toggleNav()">Services</a>
+  <a href="verify.html" onclick="toggleNav()">Drivers</a>
+  <a href="booking.html" onclick="toggleNav()">Book Transport</a>
+</div>
+
+<main class="main">
+  <div class="container">
+    <a href="index.html" class="back-link">← BACK TO HOME</a>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="track">TRACK DELIVERY</button>
+      <button class="tab-btn" data-tab="confirm">CONFIRM DELIVERY</button>
+      <button class="tab-btn" data-tab="records">DELIVERY RECORDS</button>
+    </div>
+
+    <!-- TAB 1: TRACK DELIVERY -->
+    <div class="tab-content active" id="track-tab">
+      <div class="card">
+        <div class="card-header">
+          <span class="trip-id">Track Your Shipment</span>
+        </div>
+        <div class="search-box">
+          <input type="text" id="trackTripId" placeholder="Enter Trip ID (e.g., TL-12345)">
+          <button class="btn-submit" onclick="trackDelivery()">TRACK →</button>
+        </div>
+        <div id="trackResult"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: CONFIRM DELIVERY (Driver View) -->
+    <div class="tab-content" id="confirm-tab">
+      <div class="card">
+        <div class="card-header">
+          <span class="trip-id">Confirm Delivery</span>
+          <span class="status-badge status-active">DRIVER ACTION</span>
+        </div>
+        <form id="confirmForm">
+          <div class="form-group">
+            <label>Trip ID *</label>
+            <input type="text" id="confirmTripId" required placeholder="Enter Trip ID">
+          </div>
+          <div class="form-group">
+            <label>Pickup PIN (from customer) *</label>
+            <input type="text" id="verifyPin" required placeholder="4-digit PIN" maxlength="4">
+          </div>
+          <div class="form-group">
+            <label>Receiver Name *</label>
+            <input type="text" id="receiverName" required placeholder="Full name of person receiving">
+          </div>
+          <div class="form-group">
+            <label>Receiver Signature (print name) *</label>
+            <input type="text" id="signature" required placeholder="Receiver printed name">
+          </div>
+          <div class="form-group">
+            <label>Delivery Photo *</label>
+            <input type="file" id="deliveryPhoto" accept="image/*" required>
+            <div class="photo-preview" id="photoPreview"></div>
+          </div>
+          <div class="form-group">
+            <label>Delivery Notes (optional)</label>
+            <textarea id="notes" rows="2" placeholder="Any issues or additional info..."></textarea>
+          </div>
+          <button type="submit" class="btn-submit">CONFIRM DELIVERY →</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 3: DELIVERY RECORDS -->
+    <div class="tab-content" id="records-tab">
+      <div class="card">
+        <div class="card-header">
+          <span class="trip-id">Past Delivery Records</span>
+        </div>
+        <div id="recordsList"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+
+
+  <footer>
+  <p>© 2025 TRANSPORT-LINK. SECURE LOGISTICS.</p>
+</footer>
+
+<script>
+  function toggleNav() {
+    document.getElementById('mobileNav').classList.toggle('open');
+  }
+
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab + '-tab').classList.add('active');
+    });
+  });
+
+  // Photo preview
+  document.getElementById('deliveryPhoto')?.addEventListener('change', function(e) {
+    const preview = document.getElementById('photoPreview');
+    preview.innerHTML = '';
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  });
+
+  // Track delivery
+  function trackDelivery() {
+    const tripId = document.getElementById('trackTripId').value.trim();
+    const resultDiv = document.getElementById('trackResult');
+    
+    if (!tripId) {
+      resultDiv.innerHTML = '<div class="card" style="color:var(--red); border-color:var(--red);">Please enter a Trip ID</div>';
+      return;
+    }
+
+    const deliveries = JSON.parse(localStorage.getItem('transportDeliveries') || '[]');
+    const delivery = deliveries.find(d => d.tripId === tripId);
+    const bookings = JSON.parse(localStorage.getItem('transportBookings') || '[]');
+    const booking = bookings.find(b => b.tripId === tripId);
+
+    if (!delivery && !booking) {
+      resultDiv.innerHTML = '<div class="card" style="color:var(--red); border-color:var(--red);">No trip found with ID: ' + tripId + '</div>';
+      return;
+    }
+
+    if (delivery && delivery.status === 'delivered') {
+      resultDiv.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <span class="trip-id">${delivery.tripId}</span>
+            <span class="status-badge status-delivered">✓ DELIVERED</span>
+          </div>
+          <div class="info-grid">
+            <div class="info-item"><div class="label">Receiver</div><div class="value">${delivery.receiverName}</div></div>
+            <div class="info-item"><div class="label">Delivered At</div><div class="value">${new Date(delivery.deliveredAt).toLocaleString()}</div></div>
+            <div class="info-item"><div class="label">Pickup → Dropoff</div><div class="value">${delivery.pickup || 'N/A'} → ${delivery.destination || 'N/A'}</div></div>
+          </div>
+          ${delivery.photo ? `<img src="${delivery.photo}" style="max-width:100%; margin-top:16px;">` : ''}
+          <div class="status-verified" style="margin-top:16px; color:var(--green);">✓ Delivery confirmed with PIN verification</div>
+        </div>
+      `;
+    } else if (booking && booking.status !== 'delivered') {
+      resultDiv.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <span class="trip-id">${booking.tripId}</span>
+            <span class="status-badge status-active">⏳ IN TRANSIT / PENDING</span>
+          </div>
+          <div class="info-grid">
+            <div class="info-item"><div class="label">Pickup</div><div class="value">${booking.pickup}</div></div>
+            <div class="info-item"><div class="label">Destination</div><div class="value">${booking.destination}</div></div>
+            <div class="info-item"><div class="label">Customer</div><div class="value">${booking.customerName}</div></div>
+          </div>
+          <div class="pin-display">PIN: ${booking.pickupPin}</div>
+          <div style="color:var(--orange);">⚠️ Delivery not yet confirmed. Driver must complete delivery confirmation.</div>
+        </div>
+      `;
+    }
+  }
+
+  // Confirm delivery form
+  document.getElementById('confirmForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const tripId = document.getElementById('confirmTripId').value.trim();
+    const enteredPin = document.getElementById('verifyPin').value.trim();
+    const receiverName = document.getElementById('receiverName').value.trim();
+    const signature = document.getElementById('signature').value.trim();
+    const notes = document.getElementById('notes').value;
+    const photoFile = document.getElementById('deliveryPhoto').files[0];
+
+    if (!tripId || !enteredPin || !receiverName || !signature || !photoFile) {
+      alert('Please fill all required fields and add a delivery photo');
+      return;
+    }
+
+    const bookings = JSON.parse(localStorage.getItem('transportBookings') || '[]');
+    const bookingIndex = bookings.findIndex(b => b.tripId === tripId);
+
+    if (bookingIndex === -1) {
+      alert('No booking found with this Trip ID');
+      return;
+    }
+
+    const booking = bookings[bookingIndex];
+
+    if (booking.pickupPin !== enteredPin) {
+      alert('Invalid PIN. Please check with the customer.');
+      return;
+    }
+
+    // Read photo as data URL
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const photoData = ev.target.result;
+
+      const deliveryRecord = {
+        tripId: tripId,
+        pickupPin: booking.pickupPin,
+        receiverName: receiverName,
+        signature: signature,
+        notes: notes,
+        photo: photoData,
+        pickup: booking.pickup,
+        destination: booking.destination,
+        customerName: booking.customerName,
+        customerPhone: booking.phone,
+        status: 'delivered',
+        deliveredAt: new Date().toISOString()
+      };
+
+      // Save delivery record
+      let deliveries = JSON.parse(localStorage.getItem('transportDeliveries') || '[]');
+      deliveries.push(deliveryRecord);
+      localStorage.setItem('transportDeliveries', deliveries);
+
+      // Update booking status
+      bookings[bookingIndex].status = 'delivered';
+      localStorage.setItem('transportBookings', JSON.stringify(bookings));
+
+      alert(`✓ Delivery confirmed for ${tripId}! Proof of delivery saved.`);
+      
+      // Reset form
+      document.getElementById('confirmForm').reset();
+      document.getElementById('photoPreview').innerHTML = '';
+      
+      // Refresh records display
+      loadDeliveryRecords();
+    };
+    reader.readAsDataURL(photoFile);
+  });
+
+  // Load delivery records
+  function loadDeliveryRecords() {
+    const deliveries = JSON.parse(localStorage.getItem('transportDeliveries') || '[]');
+    const recordsDiv = document.getElementById('recordsList');
+    
+    if (deliveries.length === 0) {
+      recordsDiv.innerHTML = '<div class="delivery-record"><p style="color:var(--muted)">No delivery records yet.</p></div>';
+      return;
+    }
+
+    recordsDiv.innerHTML = deliveries.slice().reverse().map(d => `
+      <div class="delivery-record">
+        <div class="info-grid" style="margin-bottom:0;">
+          <div class="info-item"><div class="label">Trip ID</div><div class="value">${d.tripId}</div></div>
+          <div class="info-item"><div class="label">Receiver</div><div class="value">${d.receiverName}</div></div>
+          <div class="info-item"><div class="label">Delivered</div><div class="value">${new Date(d.deliveredAt).toLocaleDateString()}</div></div>
+        </div>
+        <div class="info-item"><div class="label">Route</div><div class="value">${d.pickup || 'N/A'} → ${d.destination || 'N/A'}</div></div>
+        ${d.photo ? `<img src="${d.photo}" style="max-width:200px; margin-top:12px;">` : ''}
+        <div style="margin-top:12px; font-size:0.75rem; color:var(--green);">✓ Verified Delivery</div>
+      </div>
+    `).join('');
+  }
+
+  // Check URL param for Trip ID
+  const urlParams = new URLSearchParams(window.location.search);
+  const tripIdParam = urlParams.get('id');
+  if (tripIdParam) {
+    document.getElementById('trackTripId').value = tripIdParam;
+    trackDelivery();
+  }
+
+  loadDeliveryRecords();
+</script>
+
+</body>
+</html>
