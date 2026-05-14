@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Transport | Transport-Link</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #090D18;
+      --bg2:       #0F1424;
+      --bg3:       #151C30;
+      --border:    #1E2740;
+      --orange:    #FF5C1A;
+      --orange2:   #FF7A3D;
+      --blue:      #2A6EFF;
+      --text:      #E8EDF8;
+      --muted:     #6B7A99;
+      --muted2:    #3D4E6E;
+      --green:     #1AFF8C;
+      --red:       #FF3A3A;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 68px;
+      background: rgba(9, 13, 24, 0.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--orange);
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .logo-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: 0.08em;
+      color: var(--text);
+    }
+
+    .logo-text span { color: var(--orange); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--orange); }
+
+    .nav-cta {
+      background: var(--orange);
+      color: #fff !important;
+      padding: 8px 20px;
+      font-weight: 600 !important;
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 93% 100%, 0 100%);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      transition: 0.3s;
+    }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: 0;
+      top: 68px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      z-index: 99;
+      padding: 40px 5%;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .mobile-nav.open { display: flex; }
+
+    .mobile-nav a {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .main {
+      position: relative;
+      z-index: 1;
+      padding-top: 100px;
+      padding-bottom: 80px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 5%;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--orange); }
+
+    .booking-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 40px;
+    }
+
+    .section-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 2.2rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .row-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .transport-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .transport-option {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .transport-option.selected {
+      border-color: var(--orange);
+      background: rgba(255, 92, 26, 0.1);
+    }
+
+    .transport-option input {
+      display: none;
+    }
+
+    .transport-option .icon {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .transport-option .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .quote-preview {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin: 24px 0;
+      text-align: center;
+    }
+
+    .quote-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .quote-amount {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--orange);
+      color: #fff;
+      padding: 16px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      clip-path: polygon(0 0, 100% 0, 100% 75%, 94% 100%, 0 100%);
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover { background: var(--orange2); }
+
+    .success-message {
+      background: rgba(26, 255, 140, 0.1);
+      border: 1px solid var(--green);
+      padding: 20px;
+      margin-bottom: 24px;
+      text-align: center;
+      display: none;
+    }
+
+    .success-message.show { display: block; }
+
+    .success-message p { color: var(--green); font-size: 0.9rem; }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .row-2, .row-3 { grid-template-columns: 1fr; }
+      .transport-options { grid-template-columns: 1fr; }
+      .booking-card { padding: 24px; }
+      h1 { font-size: 1.6rem; }
+    }
+
+    footer {
+      padding: 40px 5%;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer p {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-mark">TL</div>
+    <span class="logo-text">TRANSPORT<span>-LINK</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#how-it-works">How It Works</a></li>
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#transport">Services</a></li>
+    <li><a href="verify.html">Drivers</a></li>
+    <li><a href="booking.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html#how-it-works" onclick="toggleNav()">How It Works</a>
+  <a href="index.html#features" onclick="toggleNav()">Features</a>
+  <a href="index.html#transport" onclick="toggleNav()">Services</a>
+  <a href="verify.html" onclick="toggleNav()">Drivers</a>
+  <a href="booking.html" onclick="toggleNav()">Book Transport</a>
+</div>
+
+<main class="main">
+  <div class="container">
+    <a href="index.html" class="back-link">← BACK TO HOME</a>
+
+    <div class="booking-card">
+      <div class="section-tag">// New Transport Request</div>
+      <h1>Book Your Delivery</h1>
+
+      <div class="success-message" id="successMessage">
+        <p>✓ Booking submitted! Your Trip ID and PIN will be shown on the next page.</p>
+      </div>
+
+      <form id="bookingForm">
+        <div class="form-group">
+          <label>Your Name *</label>
+          <input type="text" id="customerName" required placeholder="Full name">
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="tel" id="phone" required placeholder="071 234 5678">
+        </div>
+
+        <div class="form-group">
+          <label>Email (for delivery receipt)</label>
+          <input type="email" id="email" placeholder="you@example.com">
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>Pickup Location *</label>
+            <input type="text" id="pickup" required placeholder="Street, city, landmark">
+          </div>
+          <div class="form-group">
+            <label>Destination *</label>
+            <input type="text" id="destination" required placeholder="Street, city, landmark">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Transport Type *</label>
+          <div class="transport-options" id="transportOptions">
+            <div class="transport-option" data-type="bakkie" data-price="350">
+              <span class="icon">🛻</span>
+              <span class="label">Bakkie / Pickup</span>
+              <input type="radio" name="transportType" value="bakkie" style="display:none">
+            </div>
+            <div class="transport-option" data-type="medium" data-price="750">
+              <span class="icon">🚛</span>
+              <span class="label">Medium Truck</span>
+              <input type="radio" name="transportType" value="medium" style="display:none">
+            </div>
+            <div class="transport-option" data-type="heavy" data-price="1500">
+              <span class="icon">🚚</span>
+              <span class="label">Heavy Freight</span>
+              <input type="radio" name="transportType" value="heavy" style="display:none">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Cargo Description *</label>
+          <textarea id="cargo" rows="3" required placeholder="What are you shipping? Approximate weight/size?"></textarea>
+        </div>
+
+        <div class="row-3">
+          <div class="form-group">
+            <label>Preferred Date *</label>
+            <input type="date" id="date" required>
+          </div>
+          <div class="form-group">
+            <label>Preferred Time</label>
+            <input type="time" id="time">
+          </div>
+          <div class="form-group">
+            <label>Estimated Distance (km)</label>
+            <input type="number" id="distance" placeholder="Auto-calculated or enter">
+          </div>
+        </div>
+
+        <div class="quote-preview" id="quotePreview">
+          <div class="quote-label">Estimated Quote</div>
+          <div class="quote-amount" id="quoteAmount">R 0</div>
+          <div style="font-size:0.7rem; color:var(--muted); margin-top:8px">Final price confirmed when driver accepts</div>
+        </div>
+
+        <button type="submit" class="btn-submit">CONFIRM BOOKING →</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>© 2025 TRANSPORT-LINK. SECURE LOGISTICS.</p>
+</footer>
+
+<script>
+  function toggleNav() {
+    document.getElementById('mobileNav').classList.toggle('open');
+  }
+
+  // Transport type selection
+  const transportOptions = document.querySelectorAll('.transport-option');
+  let selectedPrice = 0;
+  let selectedType = '';
+
+  transportOptions.forEach(opt => {
+    opt.addEventListener('click', () => {
+      transportOptions.forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      const radio = opt.querySelector('input');
+      if (radio) radio.checked = true;
+      selectedPrice = parseInt(opt.dataset.price);
+      selectedType = opt.dataset.type;
+      updateQuote();
+    });
+  });
+
+  function updateQuote() {
+    let quote = selectedPrice;
+    const distance = document.getElementById('distance').value;
+    if (distance && distance > 0) {
+      quote += Math.round(distance * 2.5);
+    }
+    document.getElementById('quoteAmount').innerHTML = `R ${quote.toLocaleString()}`;
+  }
+
+  document.getElementById('distance').addEventListener('input', updateQuote);
+
+  // Generate random Trip ID
+  function generateTripId() {
+    const prefix = 'TL';
+    const num = Math.floor(Math.random() * 90000) + 10000;
+    return `${prefix}-${num}`;
+  }
+
+  function generatePin() {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+  }
+
+  // Handle form submission
+  document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Validate required fields
+    const name = document.getElementById('customerName').value;
+    const phone = document.getElementById('phone').value;
+    const pickup = document.getElementById('pickup').value;
+    const destination = document.getElementById('destination').value;
+    const cargo = document.getElementById('cargo').value;
+    const date = document.getElementById('date').value;
+
+    if (!name || !phone || !pickup || !destination || !cargo || !date) {
+      alert('Please fill in all required fields (*)');
+      return;
+    }
+
+    if (!selectedType) {
+      alert('Please select a transport type');
+      return;
+    }
+
+    // Create booking object
+    const tripId = generateTripId();
+    const pickupPin = generatePin();
+    const quote = document.getElementById('quoteAmount').innerText;
+
+    const booking = {
+      tripId: tripId,
+      pickupPin: pickupPin,
+      customerName: name,
+      phone: phone,
+      email: document.getElementById('email').value,
+      pickup: pickup,
+      destination: destination,
+      transportType: selectedType,
+      cargo: cargo,
+      date: date,
+      time: document.getElementById('time').value,
+      distance: document.getElementById('distance').value || 'N/A',
+      quote: quote,
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    };
+
+    // Save to localStorage
+    let bookings = JSON.parse(localStorage.getItem('transportBookings') || '[]');
+    bookings.push(booking);
+    localStorage.setItem('transportBookings', JSON.stringify(bookings));
+
+    // Store current booking for next page
+    localStorage.setItem('currentBooking', JSON.stringify(booking));
+
+    // Show success message briefly then redirect
+    const successMsg = document.getElementById('successMessage');
+    successMsg.classList.add('show');
+
+    setTimeout(() => {
+      window.location.href = `delivery.html?id=${tripId}`;
+    }, 1500);
+  });
+
+  // Set minimum date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').min = today;
+</script>
+
+</body>
+</html>
